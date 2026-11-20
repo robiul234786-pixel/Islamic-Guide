@@ -1,0 +1,509 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#063b2b">
+<title>Islamic Guide 2.0</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+ background:#061c16;color:#f8f5e8;
+ font-family:Arial,sans-serif;padding-bottom:80px
+}
+header{
+ background:linear-gradient(135deg,#075b3e,#032b20);
+ padding:22px 16px;text-align:center;
+ border-bottom:2px solid #c9a64d
+}
+header h1{color:#f0d17b;font-size:27px}
+header p{margin:7px;color:#d3dfd3}
+select,input{
+ background:#123c2d;color:white;border:1px solid #a88c45;
+ border-radius:9px;padding:11px;max-width:100%
+}
+main{max-width:700px;margin:auto;padding:14px}
+.page{display:none}
+.page.active{display:block}
+.card{
+ background:#103a2b;border:1px solid #806b38;
+ padding:16px;border-radius:15px;margin-bottom:14px
+}
+.card h2{color:#e9cb77;margin-bottom:12px;font-size:19px}
+.hero{
+ text-align:center;padding:25px 12px;
+ border-radius:16px;
+ background:linear-gradient(140deg,#176b48,#082c20);
+ margin-bottom:15px
+}
+.hero h2{color:#f3d47a;margin:12px}
+.arabic{
+ font-family:"Noto Naskh Arabic","Traditional Arabic",serif;
+ font-size:27px;line-height:2;text-align:right;
+ direction:rtl;color:#f4d77e;margin:12px 0
+}
+.btn{
+ background:#c6a44e;color:#12251a;border:0;
+ border-radius:9px;padding:11px 15px;
+ font-weight:bold;cursor:pointer;margin:4px
+}
+.btn2{
+ background:#164d38;color:white;border:1px solid #b89a4c;
+ border-radius:9px;padding:10px;margin:4px;cursor:pointer
+}
+.grid{
+ display:grid;grid-template-columns:repeat(2,1fr);gap:10px
+}
+.tile{
+ background:#164633;border:1px solid #947b42;
+ border-radius:13px;padding:17px;text-align:center;
+ cursor:pointer;min-height:85px;color:white
+}
+.tile strong{display:block;color:#f0d27a;margin-bottom:7px}
+.small{color:#c8d5c9;font-size:13px;line-height:1.7}
+.translation{line-height:1.9;color:#e8e8d8;margin:10px 0}
+.list-item{
+ background:#164633;padding:13px;border-radius:10px;
+ margin:8px 0;cursor:pointer;border:1px solid #806b38
+}
+.ayah{
+ border-bottom:1px solid #75663d;padding:15px 0
+}
+.ayah-num{
+ display:inline-block;background:#c4a24e;color:#10251a;
+ border-radius:50%;padding:6px 10px;font-size:12px
+}
+.prayers{
+ display:grid;grid-template-columns:repeat(3,1fr);gap:8px
+}
+.prayer{
+ background:#174b36;padding:12px 5px;
+ text-align:center;border-radius:10px
+}
+.prayer b{display:block;color:#e7c66e;margin-bottom:7px}
+nav{
+ position:fixed;bottom:0;left:0;width:100%;
+ background:#082a20;border-top:1px solid #c4a24e;
+ display:flex;justify-content:space-around;
+ padding:9px 2px;z-index:10
+}
+nav button{
+ background:transparent;color:#ddd;border:0;
+ font-size:11px;flex:1;padding:7px 1px
+}
+nav button.active{color:#f2ce6d}
+.center{text-align:center}
+#message{color:#f1d27b;margin:10px 0}
+audio{width:100%;margin:10px 0}
+footer{text-align:center;color:#a8b8aa;padding:18px;font-size:12px}
+</style>
+</head>
+
+<body>
+
+<header>
+ <h1>☪ ISLAMIC GUIDE</h1>
+ <p>Your Daily Islamic Companion</p>
+ <select id="lang" onchange="changeLang()">
+  <option value="bn">বাংলা</option>
+  <option value="en">English</option>
+  <option value="ar">العربية</option>
+ </select>
+</header>
+
+<main>
+
+<!-- HOME -->
+<section id="home" class="page active">
+
+ <div class="hero">
+  <div class="arabic" style="text-align:center">
+  بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+  </div>
+  <h2 id="welcome">আসসালামু আলাইকুম</h2>
+  <p>আল্লাহর স্মরণেই অন্তর প্রশান্ত হয়।</p>
+ </div>
+
+ <div class="card">
+  <h2>🕌 নামাজের সময়সূচি</h2>
+  <p class="small" id="location">আপনার অবস্থান থেকে সময় বের করুন।</p>
+  <div class="prayers" id="prayers">
+   <div class="prayer"><b>ফজর</b>--:--</div>
+   <div class="prayer"><b>যোহর</b>--:--</div>
+   <div class="prayer"><b>আসর</b>--:--</div>
+   <div class="prayer"><b>মাগরিব</b>--:--</div>
+   <div class="prayer"><b>ইশা</b>--:--</div>
+   <div class="prayer"><b>সূর্যোদয়</b>--:--</div>
+  </div>
+  <button class="btn" onclick="loadPrayer()">সময় দেখুন</button>
+  <button class="btn2" onclick="enableNotifications()">নোটিফিকেশন চালু করুন</button>
+  <p id="prayerStatus" class="small"></p>
+ </div>
+
+ <div class="card">
+  <h2>📅 আজকের তারিখ</h2>
+  <p id="date"></p>
+  <p id="hijri" class="small"></p>
+ </div>
+
+ <h2 style="color:#e9cb77;margin:16px 4px">প্রধান বিভাগ</h2>
+ <div class="grid">
+  <div class="tile" onclick="openPage('quran')">📖<strong>আল-কুরআন</strong>১১৪ সূরা</div>
+  <div class="tile" onclick="openPage('duas')">🤲<strong>দোয়া</strong>প্রতিদিনের দোয়া</div>
+  <div class="tile" onclick="openPage('hadith')">📚<strong>হাদিস</strong>হাদিস সংগ্রহ</div>
+  <div class="tile" onclick="openPage('qibla')">🧭<strong>কিবলা</strong>কিবলার দিক</div>
+ </div>
+</section>
+
+<!-- QURAN -->
+<section id="quran" class="page">
+ <div class="card">
+  <h2>📖 পবিত্র আল-কুরআন</h2>
+  <p class="small">সম্পূর্ণ সূরা ও আয়াত অনলাইনে লোড হবে।</p>
+  <input id="searchSurah" placeholder="সূরার নাম লিখে খুঁজুন..." oninput="filterSurah()" style="width:100%;margin-top:12px">
+  <div id="surahList">
+   <p id="quranStatus">সূরার তালিকা লোড হচ্ছে...</p>
+  </div>
+ </div>
+</section>
+
+<!-- SURAH READER -->
+<section id="reader" class="page">
+ <div class="card">
+  <button class="btn2" onclick="openPage('quran')">← সূরার তালিকা</button>
+  <h2 id="surahTitle">সূরা</h2>
+  <p class="small" id="surahInfo"></p>
+
+  <label class="small">অনুবাদের ভাষা:</label><br>
+  <select id="translationEdition" onchange="loadSurah(currentSurah)">
+   <option value="bn.bengali">বাংলা</option>
+   <option value="en.sahih">English</option>
+   <option value="ar.muyassar">العربية</option>
+  </select>
+
+  <div id="ayahList">
+   <p id="readerStatus">লোড হচ্ছে...</p>
+  </div>
+  <div class="center">
+   <button class="btn2" onclick="changeSurah(-1)">আগের সূরা</button>
+   <button class="btn2" onclick="changeSurah(1)">পরের সূরা</button>
+  </div>
+ </div>
+</section>
+
+<!-- DUAS -->
+<section id="duas" class="page">
+ <div class="card">
+  <h2>🤲 প্রতিদিনের দোয়া</h2>
+  <p class="small">ঘুম থেকে ওঠার দোয়া</p>
+  <p class="arabic">الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ</p>
+  <p class="translation">অর্থ: সমস্ত প্রশংসা আল্লাহর, যিনি আমাদের মৃত্যুর পর জীবিত করেছেন এবং তাঁর কাছেই আমাদের পুনরুত্থান।</p>
+ </div>
+
+ <div class="card">
+  <h2>খাবার শুরুর দোয়া</h2>
+  <p class="arabic">بِسْمِ اللَّهِ</p>
+  <p class="translation">অর্থ: আল্লাহর নামে শুরু করছি।</p>
+ </div>
+
+ <div class="card">
+  <h2>কল্যাণের দোয়া</h2>
+  <p class="arabic">رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ</p>
+  <p class="translation">অর্থ: হে আমাদের প্রতিপালক! আমাদের দুনিয়া ও আখিরাতে কল্যাণ দান করুন এবং জাহান্নামের শাস্তি থেকে রক্ষা করুন।</p>
+  <p class="small">সূরা আল-বাকারা ২:২০১</p>
+ </div>
+</section>
+
+<!-- HADITH -->
+<section id="hadith" class="page">
+ <div class="card">
+  <h2>📚 হাদিস সংগ্রহ</h2>
+  <p class="arabic">إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ</p>
+  <p class="translation">নিশ্চয়ই সকল কাজ নিয়তের ওপর নির্ভরশীল।</p>
+  <p class="small">সহিহ বুখারি, হাদিস ১</p>
+ </div>
+ <div class="card">
+  <h2>পরিচ্ছন্নতা</h2>
+  <p class="arabic">الطُّهُورُ شَطْرُ الْإِيمَانِ</p>
+  <p class="translation">পবিত্রতা ঈমানের অর্ধেক।</p>
+  <p class="small">সহিহ মুসলিম, হাদিস ২২৩</p>
+ </div>
+</section>
+
+<!-- QIBLA -->
+<section id="qibla" class="page">
+ <div class="card center">
+  <h2>🧭 কিবলা নির্দেশক</h2>
+  <div id="compass" style="font-size:85px;margin:20px">🧭</div>
+  <h2 id="qiblaResult">কিবলার দিক বের করুন</h2>
+  <button class="btn" onclick="loadQibla()">কিবলার দিক নির্ণয়</button>
+  <p class="small" id="qiblaStatus"></p>
+  <p class="small">এটি উত্তর দিক থেকে ঘড়ির কাঁটার দিকে ডিগ্রি দেখায়। কম্পাস সেন্সর না থাকলে এটি সরাসরি ফোনের দিক দেখাবে না।</p>
+ </div>
+</section>
+
+</main>
+
+<nav>
+ <button class="active" onclick="nav(this,'home')">🏠<br>হোম</button>
+ <button onclick="nav(this,'quran')">📖<br>কুরআন</button>
+ <button onclick="nav(this,'duas')">🤲<br>দোয়া</button>
+ <button onclick="nav(this,'hadith')">📚<br>হাদিস</button>
+ <button onclick="nav(this,'qibla')">🧭<br>কিবলা</button>
+</nav>
+
+<footer>ISLAMIC GUIDE 2.0 • Learn Islam Every Day</footer>
+
+<script>
+const API="https://api.alquran.cloud/v1/";
+let surahs=[];
+let currentSurah=1;
+let prayerTimes=null;
+let notificationTimers=[];
+
+function openPage(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+}
+
+function nav(btn,id){
+ openPage(id);
+ btn.classList.add('active');
+}
+
+function changeLang(){
+ const lang=document.getElementById('lang').value;
+ const welcome=document.getElementById('welcome');
+ welcome.textContent={
+ bn:'আসসালামু আলাইকুম',
+ en:'Assalamu Alaikum',
+ ar:'السلام عليكم'
+ }[lang];
+}
+
+function updateDate(){
+ const now=new Date();
+ document.getElementById('date').textContent=
+ now.toLocaleDateString('bn-BD',{dateStyle:'full'});
+ try{
+ document.getElementById('hijri').textContent=
+ 'হিজরি: '+new Intl.DateTimeFormat('bn-BD-u-ca-islamic',{dateStyle:'full'}).format(now);
+ }catch(e){}
+}
+updateDate();
+
+// QURAN SURAH LIST
+async function loadSurahList(){
+ const box=document.getElementById('surahList');
+ try{
+ const response=await fetch(API+'surah');
+ const result=await response.json();
+ if(result.code!==200)throw Error();
+ surahs=result.data;
+ renderSurahs(surahs);
+ }catch(e){
+ box.innerHTML='<p class="small">সূরার তালিকা পাওয়া যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করুন। <button class="btn2" onclick="loadSurahList()">আবার চেষ্টা করুন</button></p>';
+ }
+}
+
+function renderSurahs(data){
+ const box=document.getElementById('surahList');
+ box.innerHTML=data.map(s=>`
+ <div class="list-item" onclick="loadSurah(${s.number})">
+  <strong>${s.number}. ${s.name}</strong>
+  <span class="small"> — ${s.englishName} | ${s.numberOfAyahs} আয়াত</span>
+ </div>`).join('');
+}
+
+function filterSurah(){
+ const q=document.getElementById('searchSurah').value.toLowerCase();
+ renderSurahs(surahs.filter(s=>
+ s.name.includes(q)||s.englishName.toLowerCase().includes(q)||
+ s.englishNameTranslation.toLowerCase().includes(q)||
+ String(s.number)===q
+ ));
+}
+
+// FULL QURAN READER
+async function loadSurah(number){
+ if(!number)return;
+ currentSurah=number;
+ openPage('reader');
+
+ const list=document.getElementById('ayahList');
+ list.innerHTML='<p>কুরআনের আয়াত লোড হচ্ছে...</p>';
+
+ const edition=document.getElementById('translationEdition').value;
+
+ try{
+ const urls=[
+ fetch(API+'surah/'+number+'/quran-uthmani'),
+ fetch(API+'surah/'+number+'/'+edition),
+ fetch(API+'surah/'+number+'/ar.alafasy')
+ ];
+ const responses=await Promise.all(urls);
+ const results=await Promise.all(responses.map(r=>r.json()));
+
+ if(results.some(r=>r.code!==200))throw Error();
+
+ const arabic=results[0].data.ayahs;
+ const translated=results[1].data.ayahs;
+ const audio=results[2].data.ayahs;
+
+ document.getElementById('surahTitle').textContent=
+ results[0].data.name+' — '+results[0].data.englishName;
+
+ document.getElementById('surahInfo').textContent=
+ 'সূরা '+number+' | '+arabic.length+' আয়াত | '+results[0].data.revelationType;
+
+ list.innerHTML=arabic.map((a,i)=>`
+ <div class="ayah">
+  <span class="ayah-num">${a.numberInSurah}</span>
+  <p class="arabic">${a.text}</p>
+  <p class="translation">${translated[i]?.text||''}</p>
+  ${audio[i]?.audio?`
+   <audio controls preload="none">
+    <source src="${audio[i].audio}" type="audio/mpeg">
+   </audio>`:''}
+ </div>`).join('');
+
+ window.scrollTo(0,0);
+
+ }catch(e){
+ list.innerHTML='<p>কুরআন লোড করা যায়নি। ইন্টারনেট পরীক্ষা করে আবার চেষ্টা করুন। <button class="btn2" onclick="loadSurah(currentSurah)">আবার চেষ্টা</button></p>';
+ }
+}
+
+function changeSurah(n){
+ const next=currentSurah+n;
+ if(next>=1&&next<=114)loadSurah(next);
+}
+
+loadSurahList();
+
+// PRAYER TIMES
+async function loadPrayer(){
+ const status=document.getElementById('prayerStatus');
+ status.textContent='আপনার অবস্থান নেওয়া হচ্ছে...';
+
+ if(!navigator.geolocation){
+ status.textContent='এই ব্রাউজারে লোকেশন নেই।';
+ return;
+ }
+
+ navigator.geolocation.getCurrentPosition(async pos=>{
+ try{
+ const lat=pos.coords.latitude;
+ const lon=pos.coords.longitude;
+
+ // Method 1 and Hanafi Asr school
+ const url=`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=1&school=1`;
+ const response=await fetch(url);
+ const result=await response.json();
+ if(result.code!==200)throw Error();
+
+ prayerTimes=result.data.timings;
+ const t=prayerTimes;
+ const items=[
+ ['ফজর',t.Fajr],['যোহর',t.Dhuhr],['আসর',t.Asr],
+ ['মাগরিব',t.Maghrib],['ইশা',t.Isha],['সূর্যোদয়',t.Sunrise]
+ ];
+
+ document.getElementById('prayers').innerHTML=
+ items.map(([name,time])=>
+ `<div class="prayer"><b>${name}</b>${time}</div>`
+ ).join('');
+
+ document.getElementById('location').textContent=
+ 'অবস্থান: '+lat.toFixed(3)+', '+lon.toFixed(3);
+
+ status.textContent='নামাজের সময় আপডেট হয়েছে।';
+ scheduleNotifications();
+ }catch(e){
+ status.textContent='সময় পাওয়া যায়নি। ইন্টারনেট পরীক্ষা করুন।';
+ }
+ },()=>{
+ status.textContent='লোকেশন অনুমতি দিন।';
+ },{enableHighAccuracy:true,timeout:15000});
+}
+
+// PRAYER NOTIFICATIONS
+async function enableNotifications(){
+ if(!('Notification' in window)){
+ alert('এই ব্রাউজারে নোটিফিকেশন নেই।');
+ return;
+ }
+ const permission=await Notification.requestPermission();
+ if(permission==='granted'){
+ alert('নোটিফিকেশন অনুমতি দেওয়া হয়েছে। নামাজের সময় আগে আপডেট করুন।');
+ if(prayerTimes)scheduleNotifications();
+ }else{
+ alert('নোটিফিকেশন অনুমতি দেওয়া হয়নি।');
+ }
+}
+
+function scheduleNotifications(){
+ notificationTimers.forEach(id=>clearTimeout(id));
+ notificationTimers=[];
+
+ if(!prayerTimes||!('Notification' in window)||
+ Notification.permission!=='granted')return;
+
+ const names={
+ Fajr:'ফজরের নামাজ',
+ Dhuhr:'যোহরের নামাজ',
+ Asr:'আসরের নামাজ',
+ Maghrib:'মাগরিবের নামাজ',
+ Isha:'ইশার নামাজ'
+ };
+
+ const now=new Date();
+
+ Object.keys(names).forEach(key=>{
+ const [hour,minute]=prayerTimes[key].split(':').map(Number);
+ const target=new Date();
+ target.setHours(hour,minute,0,0);
+ const delay=target-now;
+
+ if(delay>0&&delay<86400000){
+ const id=setTimeout(()=>{
+ new Notification('🕌 '+names[key],{
+ body:'নামাজের সময় হয়েছে। নামাজ আদায়ের প্রস্তুতি নিন।'
+ });
+ },delay);
+ notificationTimers.push(id);
+ }
+ });
+}
+
+// QIBLA BEARING
+function bearing(lat1,lon1,lat2,lon2){
+ const rad=x=>x*Math.PI/180;
+ const y=Math.sin(rad(lon2-lon1));
+ const x=Math.cos(rad(lat1))*Math.tan(rad(lat2))-
+ Math.sin(rad(lat1))*Math.cos(rad(lon2-lon1));
+ return (Math.atan2(y,x)*180/Math.PI+360)%360;
+}
+
+function loadQibla(){
+ const status=document.getElementById('qiblaStatus');
+ status.textContent='অবস্থান নেওয়া হচ্ছে...';
+
+ navigator.geolocation.getCurrentPosition(pos=>{
+ const lat=pos.coords.latitude;
+ const lon=pos.coords.longitude;
+ const direction=bearing(lat,lon,21.4225,39.8262);
+
+ document.getElementById('qiblaResult').textContent=
+ direction.toFixed(1)+'° (উত্তর থেকে)';
+ status.textContent='কাবা শরিফের অবস্থানের ভিত্তিতে হিসাব করা হয়েছে।';
+ },()=>{
+ status.textContent='লোকেশন অনুমতি প্রয়োজন।';
+ });
+}
+</script>
+</body>
+</html>
